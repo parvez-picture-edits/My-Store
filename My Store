@@ -1,0 +1,22 @@
+my-store/
+│── index.html         ← Full website with all products + banner + SKUs
+│── css/
+│     └── style.css    ← White + Dark Green theme
+│── js/
+│     └── script.js    ← Minimal JS
+└── images/
+      ├── banner.jpg
+      ├── watch1.jpg
+      ├── jeans1.jpg
+      ├── tshirt1.jpg
+      ├── shirt1.jpg
+      ├── baggy1.jpg
+      ├── lower1.jpg
+      ├── cap1.jpg
+      ├── bracelet1.jpg
+      ├── sunglasses1.jpg
+      ├── hoodie1.jpg
+      ├── earbuds1.jpg
+      ├── charger1.jpg
+      ├── cable1.jpg
+      └── earphone1.jpg
