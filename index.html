@@ -1,1 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trending Wearing Outfit 2.0</title>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<style>
+body{margin:0;font-family:sans-serif;background:#f1f3f6}
+
+/* HEADER */
+.header{
+background:#2874f0;
+color:#fff;
+padding:15px;
+text-align:center;
+font-weight:bold;
+}
+
+/* BUTTON */
+.btn{
+background:#ff3f6c;
+color:#fff;
+padding:12px;
+margin-top:10px;
+text-align:center;
+border-radius:8px;
+}
+
+/* GRID */
+.products{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+padding:10px;
+}
+
+.card{
+background:#fff;
+padding:10px;
+border-radius:10px;
+}
+
+.card img{width:100%}
+
+.step{display:none;padding:15px}
+input{width:90%;padding:10px;margin:5px}
+
+.trackBox{
+background:#fff;
+padding:10px;
+border-radius:10px;
+margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">🔥 Trending Wearing Outfit 2.0</div>
+
+<!-- LOGIN -->
+<div id="login" class="step" style="display:block">
+<h3>Login</h3>
+<input id="user" placeholder="Enter Name">
+<button class="btn" onclick="login()">Login</button>
+</div>
+
+<!-- HOME -->
+<div id="home" class="step">
+<div class="products" id="products"></div>
+</div>
+
+<!-- ADDRESS -->
+<div id="address" class="step">
+<h3>Address</h3>
+<input id="addr" placeholder="Full Address">
+<button class="btn" onclick="payment()">Continue</button>
+</div>
+
+<!-- PAYMENT -->
+<div id="payment" class="step"></div>
+
+<!-- TRACK -->
+<div id="track" class="step">
+<h3>Track Order</h3>
+<input id="trackId" placeholder="Enter Order ID">
+<button class="btn" onclick="trackOrder()">Track</button>
+<div id="trackResult"></div>
+</div>
+
+<script>
+
+/* LOGIN */
+function login(){
+let u=document.getElementById("user").value;
+if(!u){alert("Enter name");return;}
+localStorage.setItem("user",u);
+document.getElementById("login").style.display="none";
+document.getElementById("home").style.display="block";
+load();
+}
+
+/* PRODUCTS */
+const data=[
+{name:"Shoes",price:999,img:"https://images.unsplash.com/photo-1542291026"},
+{name:"Tshirt",price:399,img:"https://images.unsplash.com/photo-1523381210434"},
+{name:"Watch",price:699,img:"https://images.unsplash.com/photo-1518546305927"}
+];
+
+let current;
+
+/* LOAD */
+function load(){
+let box=document.getElementById("products");
+box.innerHTML="";
+data.forEach((p,i)=>{
+box.innerHTML+=`
+<div class="card">
+<img src="${p.img}">
+<h4>${p.name}</h4>
+<p>₹${p.price}</p>
+<div class="btn" onclick="buy(${i})">Buy</div>
+</div>`;
+});
+}
+
+/* BUY */
+function buy(i){
+current=data[i];
+document.getElementById("home").style.display="none";
+document.getElementById("address").style.display="block";
+}
+
+/* PAYMENT */
+function payment(){
+
+let addr=document.getElementById("addr").value;
+if(!addr){alert("Enter address");return;}
+
+let total=current.price+50;
+
+document.getElementById("address").style.display="none";
+document.getElementById("payment").style.display="block";
+
+document.getElementById("payment").innerHTML=`
+
+<h3>Payment</h3>
+
+<div class="btn" onclick="pay()">Pay ₹${total}</div>
+
+<img src="https://chart.googleapis.com/chart?cht=qr&chl=upi://pay?pa=9817175353@ybl&pn=Store&am=${total}" width="200">
+
+<button class="btn" onclick="done()">I Paid</button>
+
+`;
+}
+
+/* PAY */
+function pay(){
+let total=current.price+50;
+window.open(`upi://pay?pa=9817175353@ybl&pn=Store&am=${total}`);
+}
+
+/* ORDER COMPLETE */
+function done(){
+
+let id="ORD"+Math.floor(Math.random()*100000);
+
+let order={
+id:id,
+status:1
+};
+
+localStorage.setItem("order",JSON.stringify(order));
+
+alert("Order Placed ID: "+id);
+
+document.getElementById("payment").style.display="none";
+document.getElementById("track").style.display="block";
+}
+
+/* TRACK */
+function trackOrder(){
+
+let id=document.getElementById("trackId").value;
+let order=JSON.parse(localStorage.getItem("order"));
+
+if(!order || order.id!=id){
+document.getElementById("trackResult").innerHTML="Not Found";
+return;
+}
+
+let status=["Placed","Shipped","Out for Delivery","Delivered"];
+
+document.getElementById("trackResult").innerHTML=`
+<div class="trackBox">
+Order ID: ${order.id}<br>
+Status: ${status[order.status]}
+</div>
+`;
+
+order.status++;
+if(order.status>3)order.status=3;
+
+localStorage.setItem("order",JSON.stringify(order));
+}
+
+</script>
+
+</body>
+  </html>
